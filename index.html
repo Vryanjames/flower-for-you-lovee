@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Watercolour Flowers</title>
+<style>
+  body {
+    min-height: 100vh;
+    margin: 0;
+    padding: 0;
+    background-image: url(https://s3-us-west-2.amazonaws.com/s.cdpn.io/756881/textured_paper_%402X.png);
+    background-blend-mode: multiply;
+    background-color: #efe6dc;
+    background-repeat: repeat;
+    background-size: 800px;
+  }
+
+  svg {
+    display: block;
+    height: 86vh;
+    width: 100%;
+    margin-top: 7vh;
+  }
+
+  /* hand-drawn wobble on the line art */
+  #linework { animation: squigglevision 0.5s steps(1) infinite; }
+  @keyframes squigglevision {
+    0%   { filter: url('#sketch-0'); }
+    20%  { filter: url('#sketch-1'); }
+    40%  { filter: url('#sketch-2'); }
+    60%  { filter: url('#sketch-3'); }
+    80%  { filter: url('#sketch-4'); }
+  }
+
+  /* stems and leaf veins draw themselves */
+  .draw {
+    stroke-dasharray: 1;
+    stroke-dashoffset: 1;
+    animation: paint 1.6s ease-in-out forwards;
+  }
+  .d2 { animation-delay: .4s; }
+  .d3 { animation-delay: .8s; }
+  @keyframes paint { to { stroke-dashoffset: 0; } }
+
+  /* leaves and washes fade in */
+  .fade {
+    opacity: 0;
+    animation: fadein 1.4s ease-out forwards;
+    animation-delay: 1.2s;
+  }
+  @keyframes fadein { to { opacity: 1; } }
+
+  /* blooms open, then sway */
+  .bloom {
+    opacity: 0;
+    transform: scale(.2) rotate(-25deg);
+    animation:
+      open 1.8s cubic-bezier(.2,.9,.3,1.2) forwards,
+      sway 7s ease-in-out 3s infinite alternate;
+  }
+  .b1 { animation-delay: 1.4s, 3.2s; }
+  .b2 { animation-delay: 1.9s, 3.7s; }
+  .b3 { animation-delay: 2.4s, 4.2s; }
+  @keyframes open { to { opacity: 1; transform: scale(1) rotate(0deg); } }
+  @keyframes sway {
+    from { transform: scale(1) rotate(-2.5deg); }
+    to   { transform: scale(1.03) rotate(2.5deg); }
+  }
+
+  .wash { mix-blend-mode: multiply; }
+
+  @media (prefers-reduced-motion: reduce) {
+    #linework, .draw, .fade, .bloom { animation: none !important; }
+    .draw { stroke-dashoffset: 0; }
+    .fade, .bloom { opacity: 1; transform: none; }
+  }
+</style>
+</head>
+<body>
+
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 500" role="img" aria-label="Watercolour flower bouquet">
+  <defs>
+    <!-- wobble filters -->
+    <filter id="sketch-0"><feTurbulence baseFrequency="0.05" numOctaves="3" seed="0" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="1.5"/></filter>
+    <filter id="sketch-1"><feTurbulence baseFrequency="0.05" numOctaves="3" seed="1" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="2.5"/></filter>
+    <filter id="sketch-2"><feTurbulence baseFrequency="0.05" numOctaves="3" seed="2" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="1.5"/></filter>
+    <filter id="sketch-3"><feTurbulence baseFrequency="0.05" numOctaves="3" seed="3" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="2.5"/></filter>
+    <filter id="sketch-4"><feTurbulence baseFrequency="0.05" numOctaves="3" seed="4" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="1.5"/></filter>
+
+    <!-- watercolour bleed for the washes -->
+    <filter id="bleed" x="-30%" y="-30%" width="160%" height="160%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.035" numOctaves="4" seed="7" result="n"/>
+      <feDisplacementMap in="SourceGraphic" in2="n" scale="22" result="d"/>
+      <feGaussianBlur in="d" stdDeviation="3"/>
+    </filter>
+
+    <!-- gradients (petal drawn base at bottom, tip at top) -->
+    <linearGradient id="gRose" x1="0" y1="1" x2="0" y2="0">
+      <stop offset="0" stop-color="#fff0e3"/><stop offset=".45" stop-color="#f7b5bd"/><stop offset="1" stop-color="#df5f7e"/>
+    </linearGradient>
+    <linearGradient id="gRoseLight" x1="0" y1="1" x2="0" y2="0">
+      <stop offset="0" stop-color="#fff6ec"/><stop offset=".6" stop-color="#fbd0d0"/><stop offset="1" stop-color="#ee94a8"/>
+    </linearGradient>
+    <linearGradient id="gPeach" x1="0" y1="1" x2="0" y2="0">
+      <stop offset="0" stop-color="#fff3d6"/><stop offset=".5" stop-color="#ffc79a"/><stop offset="1" stop-color="#f58f6b"/>
+    </linearGradient>
+    <linearGradient id="gPeachLight" x1="0" y1="1" x2="0" y2="0">
+      <stop offset="0" stop-color="#fffaea"/><stop offset="1" stop-color="#ffd9b8"/>
+    </linearGradient>
+    <linearGradient id="gLav" x1="0" y1="1" x2="0" y2="0">
+      <stop offset="0" stop-color="#f4eefc"/><stop offset=".5" stop-color="#c9b8ee"/><stop offset="1" stop-color="#8f78cf"/>
+    </linearGradient>
+    <linearGradient id="gLeaf" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#7fa68a"/><stop offset="1" stop-color="#bfd8b4"/>
+    </linearGradient>
+    <linearGradient id="gLeaf2" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#5f8f93"/><stop offset="1" stop-color="#a9d0c4"/>
+    </linearGradient>
+    <radialGradient id="gCenter" cx=".4" cy=".35" r=".8">
+      <stop offset="0" stop-color="#fff2a8"/><stop offset=".6" stop-color="#f2b84b"/><stop offset="1" stop-color="#d98a2b"/>
+    </radialGradient>
+
+    <!-- petal shapes -->
+    <path id="petalShape" d="M0,0 C-22,-10 -24,-48 0,-66 C24,-48 22,-10 0,0Z"/>
+    <path id="petalPoint" d="M0,0 C-15,-12 -17,-42 0,-70 C17,-42 15,-12 0,0Z"/>
+    <path id="vein" d="M0,-6 C1,-22 -1,-40 0,-54" fill="none"/>
+
+    <!-- flower 1: layered rose -->
+    <g id="bloomRose" stroke="#465b78" stroke-width="1.3" stroke-linejoin="round">
+      <g fill="url(#gRoseLight)">
+        <use href="#petalShape" transform="rotate(15)"/><use href="#petalShape" transform="rotate(45)"/>
+        <use href="#petalShape" transform="rotate(75)"/><use href="#petalShape" transform="rotate(105)"/>
+        <use href="#petalShape" transform="rotate(135)"/><use href="#petalShape" transform="rotate(165)"/>
+        <use href="#petalShape" transform="rotate(195)"/><use href="#petalShape" transform="rotate(225)"/>
+        <use href="#petalShape" transform="rotate(255)"/><use href="#petalShape" transform="rotate(285)"/>
+        <use href="#petalShape" transform="rotate(315)"/><use href="#petalShape" transform="rotate(345)"/>
+      </g>
+      <g fill="url(#gRose)">
+        <use href="#petalShape" transform="rotate(0) scale(.78)"/><use href="#petalShape" transform="rotate(45) scale(.78)"/>
+        <use href="#petalShape" transform="rotate(90) scale(.78)"/><use href="#petalShape" transform="rotate(135) scale(.78)"/>
+        <use href="#petalShape" transform="rotate(180) scale(.78)"/><use href="#petalShape" transform="rotate(225) scale(.78)"/>
+        <use href="#petalShape" transform="rotate(270) scale(.78)"/><use href="#petalShape" transform="rotate(315) scale(.78)"/>
+      </g>
+      <g fill="none" stroke-width=".7" opacity=".7">
+        <use href="#vein" transform="rotate(0) scale(.78)"/><use href="#vein" transform="rotate(90) scale(.78)"/>
+        <use href="#vein" transform="rotate(180) scale(.78)"/><use href="#vein" transform="rotate(270) scale(.78)"/>
+        <use href="#vein" transform="rotate(45) scale(.78)"/><use href="#vein" transform="rotate(135) scale(.78)"/>
+        <use href="#vein" transform="rotate(225) scale(.78)"/><use href="#vein" transform="rotate(315) scale(.78)"/>
+      </g>
+      <g fill="url(#gRose)" opacity=".95">
+        <use href="#petalShape" transform="rotate(22) scale(.42)"/><use href="#petalShape" transform="rotate(112) scale(.42)"/>
+        <use href="#petalShape" transform="rotate(202) scale(.42)"/><use href="#petalShape" transform="rotate(292) scale(.42)"/>
+      </g>
+      <circle r="9" fill="url(#gCenter)"/>
+      <g fill="#c9762a" stroke="none">
+        <circle cx="0" cy="-5" r="1.1"/><circle cx="4.5" cy="-2" r="1.1"/><circle cx="3" cy="4" r="1.1"/>
+        <circle cx="-3" cy="4" r="1.1"/><circle cx="-4.5" cy="-2" r="1.1"/><circle cx="0" cy="0" r="1.2"/>
+      </g>
+    </g>
+
+    <!-- flower 2: peach daisy-ish -->
+    <g id="bloomPeach" stroke="#465b78" stroke-width="1.4" stroke-linejoin="round">
+      <g fill="url(#gPeachLight)">
+        <use href="#petalPoint" transform="rotate(0)"/><use href="#petalPoint" transform="rotate(36)"/>
+        <use href="#petalPoint" transform="rotate(72)"/><use href="#petalPoint" transform="rotate(108)"/>
+        <use href="#petalPoint" transform="rotate(144)"/><use href="#petalPoint" transform="rotate(180)"/>
+        <use href="#petalPoint" transform="rotate(216)"/><use href="#petalPoint" transform="rotate(252)"/>
+        <use href="#petalPoint" transform="rotate(288)"/><use href="#petalPoint" transform="rotate(324)"/>
+      </g>
+      <g fill="url(#gPeach)">
+        <use href="#petalPoint" transform="rotate(18) scale(.74)"/><use href="#petalPoint" transform="rotate(54) scale(.74)"/>
+        <use href="#petalPoint" transform="rotate(90) scale(.74)"/><use href="#petalPoint" transform="rotate(126) scale(.74)"/>
+        <use href="#petalPoint" transform="rotate(162) scale(.74)"/><use href="#petalPoint" transform="rotate(198) scale(.74)"/>
+        <use href="#petalPoint" transform="rotate(234) scale(.74)"/><use href="#petalPoint" transform="rotate(270) scale(.74)"/>
+        <use href="#petalPoint" transform="rotate(306) scale(.74)"/><use href="#petalPoint" transform="rotate(342) scale(.74)"/>
+      </g>
+      <circle r="11" fill="url(#gCenter)"/>
+      <g fill="#c9762a" stroke="none">
+        <circle cx="0" cy="-6" r="1.2"/><circle cx="5.5" cy="-2" r="1.2"/><circle cx="3.5" cy="5" r="1.2"/>
+        <circle cx="-3.5" cy="5" r="1.2"/><circle cx="-5.5" cy="-2" r="1.2"/><circle cx="0" cy="0" r="1.3"/>
+      </g>
+    </g>
+
+    <!-- flower 3: lavender tulip-like star -->
+    <g id="bloomLav" stroke="#465b78" stroke-width="1.3" stroke-linejoin="round">
+      <g fill="url(#gLav)">
+        <use href="#petalPoint" transform="rotate(0)"/><use href="#petalPoint" transform="rotate(51)"/>
+        <use href="#petalPoint" transform="rotate(103)"/><use href="#petalPoint" transform="rotate(154)"/>
+        <use href="#petalPoint" transform="rotate(206)"/><use href="#petalPoint" transform="rotate(257)"/>
+        <use href="#petalPoint" transform="rotate(309)"/>
+      </g>
+      <g fill="url(#gRoseLight)">
+        <use href="#petalShape" transform="rotate(25) scale(.55)"/><use href="#petalShape" transform="rotate(77) scale(.55)"/>
+        <use href="#petalShape" transform="rotate(128) scale(.55)"/><use href="#petalShape" transform="rotate(180) scale(.55)"/>
+        <use href="#petalShape" transform="rotate(231) scale(.55)"/><use href="#petalShape" transform="rotate(283) scale(.55)"/>
+        <use href="#petalShape" transform="rotate(334) scale(.55)"/>
+      </g>
+      <circle r="8" fill="url(#gCenter)"/>
+    </g>
+
+    <!-- leaf shapes -->
+    <g id="leafShape">
+      <path d="M0,0 C12,-18 44,-22 70,-4 C46,16 14,18 0,0Z" stroke="#465b78" stroke-width="1.3" stroke-linejoin="round"/>
+      <path d="M2,0 C24,-3 46,-4 66,-4" fill="none" stroke="#465b78" stroke-width=".8"/>
+      <path d="M20,-2 L32,-11 M32,-3 L46,-12 M20,-1 L30,8 M32,-3 L44,7" fill="none" stroke="#465b78" stroke-width=".6" opacity=".7"/>
+    </g>
+  </defs>
+
+  <!-- ===== watercolour washes (soft colour behind the line art) ===== -->
+  <g class="wash fade" filter="url(#bleed)">
+    <ellipse cx="205" cy="255" rx="70" ry="66" fill="#f08aa0" opacity=".55"/>
+    <ellipse cx="150" cy="160" rx="46" ry="44" fill="#ffb78a" opacity=".55"/>
+    <ellipse cx="240" cy="118" rx="38" ry="36" fill="#a994e0" opacity=".5"/>
+    <ellipse cx="205" cy="400" rx="60" ry="70" fill="#8fbf9f" opacity=".4"/>
+    <ellipse cx="150" cy="330" rx="40" ry="26" fill="#9cc9c2" opacity=".4"/>
+  </g>
+
+  <!-- ===== line art ===== -->
+  <g id="linework">
+
+    <!-- stems -->
+    <g fill="none" stroke="#465b78" stroke-width="2.6" stroke-linecap="round">
+      <path class="draw" pathLength="1" d="M176,472 C204,404 156,352 190,326 C210,312 205,300 205,290"/>
+      <path class="draw d2" pathLength="1" d="M190,330 C138,300 172,232 150,196"/>
+      <path class="draw d3" pathLength="1" d="M186,352 C252,332 278,232 240,152"/>
+    </g>
+
+    <!-- leaves -->
+    <g class="fade" stroke-linejoin="round">
+      <use href="#leafShape" fill="url(#gLeaf)"  transform="translate(182,440) rotate(-38) scale(.95)"/>
+      <use href="#leafShape" fill="url(#gLeaf2)" transform="translate(186,412) rotate(-148) scale(.85)"/>
+      <use href="#leafShape" fill="url(#gLeaf)"  transform="translate(190,386) rotate(-24) scale(.9)"/>
+      <use href="#leafShape" fill="url(#gLeaf2)" transform="translate(182,360) rotate(200) scale(.7)"/>
+      <use href="#leafShape" fill="url(#gLeaf)"  transform="translate(172,262) rotate(-215) scale(.55)"/>
+      <use href="#leafShape" fill="url(#gLeaf2)" transform="translate(160,236) rotate(-130) scale(.5)"/>
+      <use href="#leafShape" fill="url(#gLeaf)"  transform="translate(262,236) rotate(-60) scale(.55)"/>
+      <use href="#leafShape" fill="url(#gLeaf2)" transform="translate(258,196) rotate(-20) scale(.45)"/>
+    </g>
+
+    <!-- tiny berries / buds for detail -->
+    <g class="fade" stroke="#465b78" stroke-width="1.1">
+      <path d="M180,300 C168,290 160,288 152,290" fill="none" stroke-width="1.4"/>
+      <circle cx="151" cy="290" r="4" fill="#e8788f"/>
+      <path d="M255,300 C268,296 274,286 276,276" fill="none" stroke-width="1.4"/>
+      <circle cx="276" cy="275" r="4" fill="#f2b84b"/>
+      <path d="M130,200 C122,190 120,180 124,172" fill="none" stroke-width="1.4"/>
+      <circle cx="124" cy="171" r="3.5" fill="#c9b8ee"/>
+    </g>
+
+    <!-- flowers (outer group places it, inner group animates) -->
+    <g transform="translate(205,255)"><g class="bloom b1"><use href="#bloomRose"/></g></g>
+    <g transform="translate(150,160) scale(.66)"><g class="bloom b2"><use href="#bloomPeach"/></g></g>
+    <g transform="translate(240,118) scale(.56)"><g class="bloom b3"><use href="#bloomLav"/></g></g>
+  </g>
+</svg>
+
+</body>
+</html>
